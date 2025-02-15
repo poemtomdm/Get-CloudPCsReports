@@ -3,10 +3,9 @@ param (
     [string]$ClientId,
     [string]$ClientSecret,
     [int]$Days,
-    [switch]$Table  # Added switch parameter
+    [switch]$Table 
 )
 
-# Use an Azure Vault for storing your client secret for a secured usage and avoid plain text secret
 $global:tenant = $tenantId
 $global:clientId = $clientId
 $global:clientSecret = $clientSecret
