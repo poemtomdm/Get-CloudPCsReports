@@ -3,7 +3,7 @@ param (
     [string]$ClientId,
     [string]$ClientSecret,
     [int]$Days,
-    [switch]$Table 
+    [switch]$Json  
 )
 
 $global:tenant = $tenantId
@@ -74,8 +74,8 @@ foreach ($device in $allDevices) {
 }
 
 # Output results based on the -Table switch
-if ($Table) {
-    return $allReportData | Format-Table -AutoSize
+if ($Json) {
+    return $allReportData | ConvertTo-Json -Depth 5 
 } else {
-    return $allReportData | ConvertTo-Json -Depth 5
+    return $allReportData | Format-Table -AutoSize
 }
