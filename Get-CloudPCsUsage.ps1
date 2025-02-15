@@ -2,10 +2,11 @@ param (
     [string]$TenantId,
     [string]$ClientId,
     [string]$ClientSecret,
-    [int]$Dateref,
-    [switch]$Table
+    [int]$Days,
+    [switch]$Table  # Added switch parameter
 )
 
+# Use an Azure Vault for storing your client secret for a secured usage and avoid plain text secret
 $global:tenant = $tenantId
 $global:clientId = $clientId
 $global:clientSecret = $clientSecret
@@ -16,13 +17,13 @@ Connect-MgGraph -TenantId $tenant -ClientSecretCredential $ClientSecretCredentia
 
 $allDevices = @()
 # Ensure $dateref is an integer
-$dateref = [int]$dateref  
+$days = [int]$days  
 
 # Check if dateref is provided, otherwise use default 7 days
-if (-not $dateref) {
+if (-not $days) {
     $daterefFormatted = (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ")
 } else {
-    $daterefFormatted = (Get-Date).AddDays(-$dateref).ToString("yyyy-MM-ddTHH:mm:ssZ")
+    $daterefFormatted = (Get-Date).AddDays(-$days).ToString("yyyy-MM-ddTHH:mm:ssZ")
 }
 
 $nextLink = "https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/cloudPCs"
