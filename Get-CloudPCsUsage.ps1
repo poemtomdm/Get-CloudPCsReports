@@ -15,7 +15,12 @@ $ClientSecretCredential = New-Object -TypeName System.Management.Automation.PSCr
 Connect-MgGraph -TenantId $tenant -ClientSecretCredential $ClientSecretCredential -NoWelcome
 
 $allDevices=@()
-$dateref = (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ")
+
+# Check if dateref is provided, otherwise use default 7 days
+if (-not $dateref) {
+    $dateref = (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ")
+}
+
 $nextLink = "https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/cloudPCs"
 
 # Fetch all devices
@@ -30,11 +35,11 @@ $allReportData = @()
 
 foreach ($device in $allDevices) {
 
-    $cloudpcid=$device.id
-    $cloudpcname=$device.managedDeviceName
-    $upn=$device.userPrincipalName
+    $cloudpcid = $device.id
+    $cloudpcname = $device.managedDeviceName
+    $upn = $device.userPrincipalName
     
-    $uri="https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/reports/getRemoteConnectionHistoricalReports" 
+    $uri = "https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/reports/getRemoteConnectionHistoricalReports" 
     $body = @{
         filter = "CloudPcId eq '$cloudpcid' and SignInDateTime gt datetime'$dateref'"
         select = @( # Use an array for 'select'
