@@ -5,7 +5,6 @@ param (
     [int]$dateref
 )
 
-# Use an Azure Vault for storing your client secret for a secured usage and avoid plain text secret
 $global:tenant = $tenantId
 $global:clientId = $clientId
 $global:clientSecret = $clientSecret
