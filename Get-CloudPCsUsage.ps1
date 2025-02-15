@@ -2,7 +2,7 @@ param (
     [string]$tenantId,
     [string]$clientId,
     [string]$clientSecret,
-    [string]$dateref
+    [int]$dateref
 )
 
 # Use an Azure Vault for storing your client secret for a secured usage and avoid plain text secret
@@ -15,10 +15,14 @@ $ClientSecretCredential = New-Object -TypeName System.Management.Automation.PSCr
 Connect-MgGraph -TenantId $tenant -ClientSecretCredential $ClientSecretCredential -NoWelcome
 
 $allDevices=@()
+# Ensure $dateref is an integer
+$dateref = [int]$dateref  
 
 # Check if dateref is provided, otherwise use default 7 days
 if (-not $dateref) {
-    $dateref = (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ")
+    $daterefFormatted = (Get-Date).AddDays(-7).ToString("yyyy-MM-ddTHH:mm:ssZ")
+} else {
+    $daterefFormatted = (Get-Date).AddDays(-$dateref).ToString("yyyy-MM-ddTHH:mm:ssZ")
 }
 
 $nextLink = "https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/cloudPCs"
@@ -41,7 +45,7 @@ foreach ($device in $allDevices) {
     
     $uri = "https://graph.microsoft.com/beta/deviceManagement/virtualEndpoint/reports/getRemoteConnectionHistoricalReports" 
     $body = @{
-        filter = "CloudPcId eq '$cloudpcid' and SignInDateTime gt datetime'$dateref'"
+        filter = "CloudPcId eq '$cloudpcid' and SignInDateTime gt datetime'$daterefFormatted '"
         select = @( # Use an array for 'select'
             "UsageInHour"
         )
