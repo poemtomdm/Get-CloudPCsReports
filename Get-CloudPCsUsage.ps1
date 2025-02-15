@@ -72,7 +72,6 @@ foreach ($device in $allDevices) {
     $allReportData += $reportdata
 }
 
-# Convert the array to JSON and upload it
 $ReportCloudPCUsage = $allReportData | ConvertTo-Json -Depth 5
 
 return $ReportCloudPCUsage
