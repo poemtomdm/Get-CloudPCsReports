@@ -1,10 +1,12 @@
 param (
-    [string]$tenantId,
-    [string]$clientId,
-    [string]$clientSecret,
-    [int]$dateref
+    [string]$TenantId,
+    [string]$ClientId,
+    [string]$ClientSecret,
+    [int]$Dateref,
+    [switch]$Table
 )
 
+# Use an Azure Vault for storing your client secret for a secured usage and avoid plain text secret
 $global:tenant = $tenantId
 $global:clientId = $clientId
 $global:clientSecret = $clientSecret
@@ -13,7 +15,7 @@ $ClientSecretCredential = New-Object -TypeName System.Management.Automation.PSCr
 
 Connect-MgGraph -TenantId $tenant -ClientSecretCredential $ClientSecretCredential -NoWelcome
 
-$allDevices=@()
+$allDevices = @()
 # Ensure $dateref is an integer
 $dateref = [int]$dateref  
 
@@ -72,6 +74,9 @@ foreach ($device in $allDevices) {
     $allReportData += $reportdata
 }
 
-$ReportCloudPCUsage = $allReportData | ConvertTo-Json -Depth 5
-
-return $ReportCloudPCUsage
+# Output results based on the -Table switch
+if ($Table) {
+    return $allReportData | Format-Table -AutoSize
+} else {
+    return $allReportData | ConvertTo-Json -Depth 5
+}
